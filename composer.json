@@ -1,0 +1,15 @@
+{
+    "name": "bitmarshals/tablegateway",
+    "description": "Provides easy functionality for ZF Tablegateway",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "David Bwire",
+            "email": "israelbwire@gmail.com"
+        }
+    ],
+    "require": {
+        "zendframework/zend-db": "^2.9"
+    }
+}
