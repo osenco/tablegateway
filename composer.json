@@ -9,6 +9,11 @@
             "email": "israelbwire@gmail.com"
         }
     ],
+    "autoload": {
+        "psr-4": {
+            "Bitmarshals\\TableGateway\\": "src/"
+        }
+    },
     "require": {
         "zendframework/zend-db": "^2.9"
     }
