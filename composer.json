@@ -16,5 +16,6 @@
     },
     "require": {
         "zendframework/zend-db": "^2.9"
-    }
+    },
+    "minimum-stability": "stable"
 }
