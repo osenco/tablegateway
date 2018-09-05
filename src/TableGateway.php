@@ -134,4 +134,32 @@ class TableGateway extends ZfTableGateway {
         }
     }
 
+    /**
+     * Inserts rows in bulk (within a transaction)
+     * 
+     * @param array $rows
+     * @return boolean
+     * @throws \Exception
+     */
+    public function insertBulk(array $rows) {
+
+        $this->beginTransaction();
+        $sql = $this->getSlaveSql();
+
+        try {
+            foreach ($rows as $row) {
+                $insert = $sql->insert()
+                        ->columns(array_keys($row))
+                        ->values(array_values($row));
+                $result = $sql->prepareStatementForSqlObject($insert)
+                        ->execute();
+            }
+            $this->commit();
+            return true;
+        } catch (\Exception $ex) {
+            $this->rollback();
+            return false;
+        }
+    }
+
 }
