@@ -44,6 +44,20 @@ use Zend\Db\Adapter\Driver\ConnectionInterface;
 class TableGateway extends ZfTableGateway {
 
     /**
+     * Contains valid column names accepted
+     * 
+     * @var arrays 
+     */
+    protected $validColumns = [];
+
+    /**
+     * Contains a Key > Value pairs
+     * 
+     * @var array 
+     */
+    protected $keyMap = [];
+
+    /**
      * Retreive an Sql instance preset with the dbAdapter and tableName
      *
      * @return \Zend\Db\Sql\Sql $sql
@@ -159,6 +173,42 @@ class TableGateway extends ZfTableGateway {
         } catch (\Exception $ex) {
             $this->rollback();
             return false;
+        }
+    }
+
+    /**
+     * Takes a data array and changes it's keys to match the keymap
+     * Also unset old keys
+     * 
+     * @param array $data
+     */
+    public function mapKeys(array &$data) {
+        $aKeys = array_keys($data);
+        foreach ($aKeys as $key) {
+            if (array_key_exists($key, $this->keyMap)) {
+                // assigned current value to new key
+                $data[$this->keyMap[$key]] = $data[$key];
+                // unset mapped key
+                unset($data[$key]);
+            }
+        }
+    }
+
+    /**
+     * 
+     * @param array $row
+     * @return void
+     */
+    public function sanitizeColumnNames(array &$row) {
+        // nothing to do if columns not specified
+        if (empty($this->validColumns)) {
+            return;
+        }
+        $keys = array_keys($row);
+        foreach ($keys as $key) {
+            if (!in_array($key, $this->validColumns, true)) {
+                unset($row[$key]);
+            }
         }
     }
 
