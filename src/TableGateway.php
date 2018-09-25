@@ -44,14 +44,14 @@ use Zend\Db\Adapter\Driver\ConnectionInterface;
 class TableGateway extends ZfTableGateway {
 
     /**
-     * Contains valid column names accepted
+     * One dimensional array listing valid column names
      * 
      * @var arrays 
      */
     protected $validColumns = [];
 
     /**
-     * Contains a Key > Value pairs
+     * One dimensional array containing Key > Value pairs on how mapping should occur
      * 
      * @var array 
      */
@@ -152,16 +152,19 @@ class TableGateway extends ZfTableGateway {
      * Inserts rows in bulk (within a transaction)
      * 
      * @param array $rows
+     * @param array $validColumns
      * @return boolean
      * @throws \Exception
      */
-    public function insertBulk(array $rows) {
-
-        $this->beginTransaction();
-        $sql = $this->getSlaveSql();
+    public function insertBulk(array $rows, array $validColumns = []) {
 
         try {
+
+            $this->beginTransaction();
+            $sql = $this->getSlaveSql();
+
             foreach ($rows as $row) {
+                $this->sanitizeColumnNames($row, $validColumns);
                 $insert = $sql->insert()
                         ->columns(array_keys($row))
                         ->values(array_values($row));
@@ -181,8 +184,12 @@ class TableGateway extends ZfTableGateway {
      * Also unset old keys
      * 
      * @param array $data
+     * @param array $keyMap Contains hash on how data keys should be mapped
      */
-    public function mapKeys(array &$data) {
+    public function mapKeys(array &$data, array $keyMap = []) {
+        if (!empty($keyMap)) {
+            $this->keyMap = $keyMap;
+        }
         $aKeys = array_keys($data);
         foreach ($aKeys as $key) {
             if (array_key_exists($key, $this->keyMap)) {
@@ -197,9 +204,13 @@ class TableGateway extends ZfTableGateway {
     /**
      * 
      * @param array $row
+     * @param array $validColumns One dimensional array listing valid column names
      * @return void
      */
-    public function sanitizeColumnNames(array &$row) {
+    public function sanitizeColumnNames(array &$row, array $validColumns = []) {
+        if (!empty($validColumns)) {
+            $this->validColumns = $validColumns;
+        }
         // nothing to do if columns not specified
         if (empty($this->validColumns)) {
             return;
