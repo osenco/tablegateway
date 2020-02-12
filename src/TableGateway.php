@@ -3,7 +3,7 @@
 /*
  * The MIT License
  *
- * Copyright 2018 David Bwire <israelbwire@gmail.com>.
+ * Copyright 2020 Osen Concepts <hi@osen.co.ke>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,24 +24,27 @@
  * THE SOFTWARE.
  */
 
-namespace Bitmarshals\TableGateway;
+namespace Osen\TableGateway;
 
 /**
  * Description of TableGateway
  *
- * @author David Bwire <israelbwire@gmail.com>
+ * @author Osen Concepts <hi@osen.co.ke>
  */
-use Zend\Db\Sql\Sql;
-use Zend\Db\TableGateway\TableGateway as ZfTableGateway;
-use Zend\Db\Sql\Predicate\Predicate;
-use Zend\Db\Adapter\Driver\ConnectionInterface;
+
+use Laminas\Db\Sql\Sql;
+use Laminas\Db\TableGateway\TableGateway as ZfTableGateway;
+use Laminas\Db\Sql\Predicate\Predicate;
+use Laminas\Db\Adapter\Driver\ConnectionInterface;
+use Laminas\Db\Sql\SqlInterface;
 
 /**
  * Description of TableGateway
  *
- * @author David Bwire <israelbwire@gmail.com>
+ * @author Osen Concepts <hi@osen.co.ke>
  */
-class TableGateway extends ZfTableGateway {
+class TableGateway extends ZfTableGateway
+{
 
     /**
      * One dimensional array listing valid column names
@@ -60,9 +63,10 @@ class TableGateway extends ZfTableGateway {
     /**
      * Retreive an Sql instance preset with the dbAdapter and tableName
      *
-     * @return \Zend\Db\Sql\Sql $sql
+     * @return \Laminas\Db\Sql\Sql $sql
      */
-    public function getSlaveSql($table = null) {
+    public function getSlaveSql($table = null)
+    {
         if (!empty($table)) {
             return new Sql($this->getAdapter(), $table);
         }
@@ -70,9 +74,10 @@ class TableGateway extends ZfTableGateway {
     }
 
     /**
-     * @return \Zend\Db\Sql\Predicate\Predicate Description
+     * @return \Laminas\Db\Sql\Predicate\Predicate Description
      */
-    public function getPredicate() {
+    public function getPredicate()
+    {
         return new Predicate();
     }
 
@@ -80,27 +85,30 @@ class TableGateway extends ZfTableGateway {
      * 
      * @return ConnectionInterface
      */
-    public function beginTransaction() {
+    public function beginTransaction()
+    {
         return $this->getAdapter()->getDriver()
-                        ->getConnection()->beginTransaction();
+            ->getConnection()->beginTransaction();
     }
 
     /**
      * 
      * @return ConnectionInterface
      */
-    public function rollback() {
+    public function rollback()
+    {
         return $this->getAdapter()->getDriver()
-                        ->getConnection()->rollback();
+            ->getConnection()->rollback();
     }
 
     /**
      * 
      * @return ConnectionInterface
      */
-    public function commit() {
+    public function commit()
+    {
         return $this->getAdapter()->getDriver()
-                        ->getConnection()->commit();
+            ->getConnection()->commit();
     }
 
     /**
@@ -108,11 +116,12 @@ class TableGateway extends ZfTableGateway {
      * @param \Exception $ex
      * @return string
      */
-    protected function getExceptionSummary(\Exception $ex) {
+    protected function getExceptionSummary(\Exception $ex)
+    {
         return PHP_EOL .
-                '>>>Exception' . ' - ' . $ex->getMessage() .
-                PHP_EOL . '>>>Exception Code ' . $ex->getCode() .
-                PHP_EOL . '>>>File ' . $ex->getFile() . ' Line ' . $ex->getLine();
+            '>>>Exception' . ' - ' . $ex->getMessage() .
+            PHP_EOL . '>>>Exception Code ' . $ex->getCode() .
+            PHP_EOL . '>>>File ' . $ex->getFile() . ' Line ' . $ex->getLine();
     }
 
     /**
@@ -122,13 +131,14 @@ class TableGateway extends ZfTableGateway {
      * @param string $line line in file where the error occured
      * @return string
      */
-    protected function exceptionSummary(\Exception $ex, $file = null, $line = null) {
+    protected function exceptionSummary(\Exception $ex, $file = null, $line = null)
+    {
         return PHP_EOL .
-                '>>>Exception' . ' - ' . $ex->getMessage() .
-                PHP_EOL . '>>>Exception Code ' . $ex->getCode() .
-                PHP_EOL . '>>>File ' . $ex->getFile() . ' Line ' . $ex->getLine() .
-                PHP_EOL . '>>>Originating File ' . $file .
-                PHP_EOL . '>>>Originating Line ' . $line;
+            '>>>Exception' . ' - ' . $ex->getMessage() .
+            PHP_EOL . '>>>Exception Code ' . $ex->getCode() .
+            PHP_EOL . '>>>File ' . $ex->getFile() . ' Line ' . $ex->getLine() .
+            PHP_EOL . '>>>Originating File ' . $file .
+            PHP_EOL . '>>>Originating Line ' . $line;
     }
 
     /**
@@ -138,7 +148,8 @@ class TableGateway extends ZfTableGateway {
      * @param Sql $sql
      * @param bool $exit
      */
-    protected static function printSqlObject($sqlObject, $sql, $exit = 1) {
+    protected static function printSqlObject(SqlInterface $sqlObject, $sql, $exit = 1)
+    {
         echo '<br>';
         echo '<pre>';
         echo $sql->buildSqlString($sqlObject);
@@ -156,7 +167,8 @@ class TableGateway extends ZfTableGateway {
      * @return boolean
      * @throws \Exception
      */
-    public function insertBulk(array $rows, array $validColumns = []) {
+    public function insertBulk(array $rows, array $validColumns = [])
+    {
 
         try {
 
@@ -166,10 +178,10 @@ class TableGateway extends ZfTableGateway {
             foreach ($rows as $row) {
                 $this->sanitizeColumnNames($row, $validColumns);
                 $insert = $sql->insert()
-                        ->columns(array_keys($row))
-                        ->values(array_values($row));
+                    ->columns(array_keys($row))
+                    ->values(array_values($row));
                 $result = $sql->prepareStatementForSqlObject($insert)
-                        ->execute();
+                    ->execute();
             }
             $this->commit();
             return true;
@@ -186,7 +198,8 @@ class TableGateway extends ZfTableGateway {
      * @param array $data
      * @param array $keyMap Contains hash on how data keys should be mapped
      */
-    public function mapKeys(array &$data, array $keyMap = []) {
+    public function mapKeys(array &$data, array $keyMap = [])
+    {
         if (!empty($keyMap)) {
             $this->keyMap = $keyMap;
         }
@@ -207,7 +220,8 @@ class TableGateway extends ZfTableGateway {
      * @param array $validColumns One dimensional array listing valid column names
      * @return void
      */
-    public function sanitizeColumnNames(array &$row, array $validColumns = []) {
+    public function sanitizeColumnNames(array &$row, array $validColumns = [])
+    {
         if (!empty($validColumns)) {
             $this->validColumns = $validColumns;
         }
@@ -222,5 +236,4 @@ class TableGateway extends ZfTableGateway {
             }
         }
     }
-
 }

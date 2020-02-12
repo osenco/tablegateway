@@ -1,21 +1,21 @@
 {
-    "name": "bitmarshals/tablegateway",
+    "name": "osen/tablegateway",
     "description": "Provides easy functionality for ZF Tablegateway",
     "type": "library",
     "license": "MIT",
     "authors": [
         {
-            "name": "David Bwire",
-            "email": "israelbwire@gmail.com"
+            "name": "Osen Concepts",
+            "email": "hi@osen.co.ke"
         }
     ],
     "autoload": {
         "psr-4": {
-            "Bitmarshals\\TableGateway\\": "src/"
+            "Osen\\TableGateway\\": "src/"
         }
     },
     "require": {
-        "zendframework/zend-db": "^2.9"
+        "laminas/laminas-db": "^2.11"
     },
     "minimum-stability": "stable"
 }
