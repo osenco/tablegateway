@@ -1,5 +1,5 @@
 {
-    "name": "osen/tablegateway",
+    "name": "osenco/tablegateway",
     "description": "Provides easy functionality for ZF Tablegateway",
     "type": "library",
     "license": "MIT",
